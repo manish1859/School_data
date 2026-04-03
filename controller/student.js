@@ -1,4 +1,4 @@
-const school_data = require("../../model/school");
+const school_data = require("../../School_data/model/school");
 
 const student_identify=async(req,res)=>{
     const {fullName,admissionDate,scholarship,category,city,email,institute,remarks,centerCode,dob,course,finalAmount,residence,contact,degree,result,counselling,courseStatus,formNumber,gender,fees,duration,tax,permanent,parentContact,passingYear,admissionBy,feesBy}=req.body;

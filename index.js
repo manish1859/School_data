@@ -1,10 +1,10 @@
 const express=require('express');
-const connect = require('../config/db');
+const connect = require('./config/db');
 const app=express();
 const cors = require('cors');
 const router = require('./router');
 
-const port=4600;
+const port= process.env.PORT||4600;
 
 app.use(cors({
   origin: "*"
