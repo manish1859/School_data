@@ -36,19 +36,29 @@ const student_identify=async(req,res)=>{
 
 }
 
-const student_get=async(req,res)=>{
-    const student =await school_data.find()
-    if(!student||student.length===0){
-        return res.status(404).json({
-            success:false,
-            message:'student data not find'
-        })
-    }
+const student_get = async (req, res) => {
+    try {
+        const student = await school_data.find();
 
-    return res.status(200).json({
-        success:true,
-        data:student
-    })
-}
+        if (!student || student.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'student data not found'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: student
+        });
+
+    } catch (error) {
+        console.log(error); // 🔥 ye actual error batayega
+        return res.status(500).json({
+            success: false,
+            message: 'Internal Server Error'
+        });
+    }
+};
 
 module.exports={student_identify,student_get}
