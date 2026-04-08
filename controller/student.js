@@ -11,7 +11,6 @@ const student_identify = async (req, res) => {
             passingYear, admissionBy, feesBy
         } = req.body;
 
-        // 1. Validation: Zaroori fields check karein
         if (!fullName || !email || !course || !contact) {
             return res.status(400).json({
                 success: false,
@@ -19,7 +18,6 @@ const student_identify = async (req, res) => {
             });
         }
 
-        // 2. Email aur Contact ki duplicate checking
         const student_email = await school_data.findOne({ email });
         if (student_email) {
             return res.status(400).json({ success: false, message: 'This email is already registered.' });
@@ -39,7 +37,6 @@ const student_identify = async (req, res) => {
             });
         }
 
-        // 4. Student Create karein (fees aur duration Course se aa rahi hai)
         const student = await school_data.create({
             fullName,
             admissionDate,
