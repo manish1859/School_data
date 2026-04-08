@@ -1,41 +1,93 @@
+const coursetype = require("../model/courses");
 const school_data = require("../model/school");
 
-const student_identify=async(req,res)=>{
-    const {fullName,admissionDate,scholarship,category,city,email,institute,remarks,centerCode,dob,course,finalAmount,residence,contact,degree,result,counselling,courseStatus,formNumber,gender,fees,duration,tax,permanent,parentContact,passingYear,admissionBy,feesBy}=req.body;
+const student_identify = async (req, res) => {
+    try {
+        const {
+            fullName, admissionDate, scholarship, category, city, email,
+            institute, remarks, centerCode, dob, course, finalAmount,
+            residence, contact, degree, result, counselling, courseStatus,
+            formNumber, gender, tax, permanent, parentContact,
+            passingYear, admissionBy, feesBy
+        } = req.body;
 
-    if(!fullName||!admissionDate||!scholarship||!category||!city||!email||!institute||!remarks||!centerCode||!dob||!course||!finalAmount||!residence||!contact||!degree||!result||!counselling||!courseStatus||!formNumber||!gender||!fees||!duration||!tax||!permanent||!parentContact||!passingYear||!admissionBy||!feesBy){
-        return res.status(404).json({
-            success:false,
-            message:'All Field are required'
-        })
+        // 1. Validation: Zaroori fields check karein
+        if (!fullName || !email || !course || !contact) {
+            return res.status(400).json({
+                success: false,
+                message: 'Name, Email, Contact and Course are mandatory fields.'
+            });
+        }
+
+        // 2. Email aur Contact ki duplicate checking
+        const student_email = await school_data.findOne({ email });
+        if (student_email) {
+            return res.status(400).json({ success: false, message: 'This email is already registered.' });
+        }
+
+        const student_contact = await school_data.findOne({ contact });
+        if (student_contact) {
+            return res.status(400).json({ success: false, message: "This contact number is already registered." });
+        }
+
+        const courseDetails = await coursetype.findOne({ name: course });
+
+        if (!courseDetails) {
+            return res.status(404).json({
+                success: false,
+                message: `Course '${course}' not found. Please select a valid course.`
+            });
+        }
+
+        // 4. Student Create karein (fees aur duration Course se aa rahi hai)
+        const student = await school_data.create({
+            fullName,
+            admissionDate,
+            scholarship,
+            category,
+            city,
+            email,
+            institute,
+            remarks,
+            centerCode,
+            dob,
+            course,
+            finalAmount,
+            residence,
+            contact,
+            degree,
+            result,
+            counselling,
+            courseStatus,
+            formNumber,
+            gender,
+            fees: courseDetails.totalfees, 
+            duration: courseDetails.duration, 
+            tax,
+            permanent,
+            parentContact,
+            passingYear,
+            admissionBy,
+            feesBy,
+            image: req.file ? req.file.filename : ""
+        });
+
+        return res.status(201).json({
+            success: true,
+            data: student,
+            message: 'Student added successfully with auto-filled course details.'
+        });
+
+    } catch (error) {
+        // Isse terminal mein pata chalega ki exact error kya hai
+        console.error("Error in student_identify:", error);
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal Server Error",
+            error: error.message 
+        });
     }
-
-    const student_email=await school_data.findOne({email})
-    if(student_email){
-        return res.status(404).json({
-            success:false,
-            message:'This email is already'
-        })
-    }
-
-    const student_contact=await school_data.findOne({contact});
-    if(student_contact){
-        return res.status(404).json({
-            success:false,
-            message:"This contact number is already"
-        })
-    }
-
-    const student=await school_data.create({fullName,admissionDate,scholarship,category,city,email,institute,remarks,centerCode,dob,course,finalAmount,residence,contact,degree,result,counselling,courseStatus,formNumber,gender,fees,duration,tax,permanent,parentContact,passingYear,admissionBy,feesBy,image: req.file ? req.file.filename : ""})
-
-    return res.status(201).json({
-        success:true,
-        data:student,
-        message:'Add Student Successfully'
-    })
-
-}
-
+};
 const student_get = async (req, res) => {
     try {
         const student = await school_data.find();

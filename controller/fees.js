@@ -44,32 +44,36 @@ const getfees = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const student = await Fees.find();
-        // const student_image = await school_data.findOne({ student_id: id });
+        const studentFees = await Fees.find();
 
-        // if (!student || student.length === 0) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: 'data not found'
-        //     });
-        // }
+        const studentData = await school_data.findOne({ studentId: id });
 
-        if (!student_image) {
+        if (!studentFees || studentFees.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: 'student image not found'
+                message: "Fees data not found"
+            });
+        }
+
+        if (!studentData) {
+            return res.status(404).json({
+                success: false,
+                message: "Student image not found"
             });
         }
 
         return res.status(200).json({
             success: true,
-            data: student,
-            // image: student_image.image
+            data: studentFees,
+            image: studentData.image  
         });
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({ success: false, message: "Server error" });
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
     }
 };
 
