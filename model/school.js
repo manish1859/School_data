@@ -2,6 +2,13 @@ const { Schema, default: mongoose } = require("mongoose");
 
 const schollSchema = new Schema(
     {
+        student_id:{
+            type:String,
+            unique: true,
+            default: function () {
+               return "TIPSG" + Date.now().toString().slice(-6);
+            },
+        },
         fullName: {
             type: String,
             require: true
@@ -115,7 +122,11 @@ const schollSchema = new Schema(
             enum: ['Cash', 'UPI', 'Card'],
             require: true
 
-        }
+        },
+        image: {
+           type: String,
+           require: false
+        },
     },
     { timestamps: true }
 )

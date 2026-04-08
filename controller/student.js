@@ -26,7 +26,7 @@ const student_identify=async(req,res)=>{
         })
     }
 
-    const student=await school_data.create({fullName,admissionDate,scholarship,category,city,email,institute,remarks,centerCode,dob,course,finalAmount,residence,contact,degree,result,counselling,courseStatus,formNumber,gender,fees,duration,tax,permanent,parentContact,passingYear,admissionBy,feesBy})
+    const student=await school_data.create({fullName,admissionDate,scholarship,category,city,email,institute,remarks,centerCode,dob,course,finalAmount,residence,contact,degree,result,counselling,courseStatus,formNumber,gender,fees,duration,tax,permanent,parentContact,passingYear,admissionBy,feesBy,image: req.file ? req.file.filename : ""})
 
     return res.status(201).json({
         success:true,
@@ -61,4 +61,29 @@ const student_get = async (req, res) => {
     }
 };
 
-module.exports={student_identify,student_get}
+const student_id=async(req,res)=>{
+    const {id}=req.params;
+    const student=await school_data.findById(id)
+    if(!student){
+        return res.status(404).json({
+            success:false,
+            message:'Student not found'
+        })
+    }
+    return res.status(200).json({
+        success:true,
+        message:student
+    })
+}
+
+const student_idupdate=async(req,res)=>{
+    const {id}=req.params;
+    const student=await school_data.findByIdAndUpdate(id,req.body,{unique:true})
+    return res.status(200).json({
+        success:true,
+        message:student
+    })
+}
+
+
+module.exports={student_identify,student_get,student_id,student_idupdate}
