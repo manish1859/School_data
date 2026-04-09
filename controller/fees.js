@@ -25,7 +25,7 @@ const createFees = async (req, res) => {
             description: req.body.description,
             transactionId: req.body.transactionId,
             paymentMode,
-            // invoiceNumber
+            invoiceNumber
         });
 
         return res.status(201).json({
@@ -96,5 +96,25 @@ const getStudentById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+const invoiceupdate=async(req,res)=>{
+    try {
+        const{id}=req.params;
+        const updateinvoice=await Fees.findByIdAndUpdate(id,req.body,{new:true})
+
+        return res.status(201).json({
+            success:true,
+            data:updateinvoice,
+            message:"update successfully"
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Not updated  "
+        })
+    }
+
+}
 
 module.exports = { createFees,getfees,getStudentById };

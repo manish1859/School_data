@@ -76,7 +76,6 @@ const student_identify = async (req, res) => {
         });
 
     } catch (error) {
-        // Isse terminal mein pata chalega ki exact error kya hai
         console.error("Error in student_identify:", error);
         return res.status(500).json({ 
             success: false, 
