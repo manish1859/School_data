@@ -5,12 +5,13 @@ const student_identify = async (req, res) => {
     try {
         const {
             fullName, admissionDate, scholarship, category, city, email,
-            institute, remarks, centerCode, dob, course, finalAmount,
+            institute, remarks, centerCode, dob, course,
             residence, contact, degree, result, counselling, courseStatus,
             formNumber, gender, tax, permanent, parentContact,
             passingYear, admissionBy, feesBy
         } = req.body;
 
+        // ✅ Required fields check
         if (!fullName || !email || !course || !contact) {
             return res.status(400).json({
                 success: false,
@@ -18,16 +19,25 @@ const student_identify = async (req, res) => {
             });
         }
 
+        // ✅ Email duplicate check
         const student_email = await school_data.findOne({ email });
         if (student_email) {
-            return res.status(400).json({ success: false, message: 'This email is already registered.' });
+            return res.status(400).json({
+                success: false,
+                message: 'This email is already registered.'
+            });
         }
 
+        // ✅ Contact duplicate check
         const student_contact = await school_data.findOne({ contact });
         if (student_contact) {
-            return res.status(400).json({ success: false, message: "This contact number is already registered." });
+            return res.status(400).json({
+                success: false,
+                message: "This contact number is already registered."
+            });
         }
 
+        // ✅ Course fetch
         const courseDetails = await coursetype.findOne({ name: course });
 
         if (!courseDetails) {
@@ -37,10 +47,15 @@ const student_identify = async (req, res) => {
             });
         }
 
+        const fees = Number(courseDetails.totalfees) || 0;
+        const scholarshipValue = Number(scholarship) || 0;
+
+        const discountAmount = (fees * scholarshipValue) / 100;
+        const finalAmount = Math.max(0, fees - discountAmount);
+
         const student = await school_data.create({
             fullName,
             admissionDate,
-            scholarship,
             category,
             city,
             email,
@@ -49,7 +64,11 @@ const student_identify = async (req, res) => {
             centerCode,
             dob,
             course,
-            finalAmount,
+            fees: fees,
+            duration: courseDetails.duration,
+            scholarship: scholarshipValue,
+            finalAmount: finalAmount,
+
             residence,
             contact,
             degree,
@@ -58,14 +77,13 @@ const student_identify = async (req, res) => {
             courseStatus,
             formNumber,
             gender,
-            fees: courseDetails.totalfees, 
-            duration: courseDetails.duration, 
             tax,
             permanent,
             parentContact,
             passingYear,
             admissionBy,
             feesBy,
+
             image: req.file ? req.file.filename : ""
         });
 
@@ -77,10 +95,10 @@ const student_identify = async (req, res) => {
 
     } catch (error) {
         console.error("Error in student_identify:", error);
-        return res.status(500).json({ 
-            success: false, 
+        return res.status(500).json({
+            success: false,
             message: "Internal Server Error",
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -124,14 +142,30 @@ const student_id=async(req,res)=>{
     })
 }
 
-const student_idupdate=async(req,res)=>{
-    const {id}=req.params;
-    const student=await school_data.findByIdAndUpdate(id,req.body,{unique:true})
-    return res.status(200).json({
-        success:true,
-        message:student
-    })
-}
+const student_idupdate = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        let updateData = { ...req.body };
+
+        if (req.file) {
+            updateData.image = req.file.filename;
+        }
+
+        const student = await school_data.findByIdAndUpdate(id,updateData,{ new: true });
+
+        return res.status(200).json({
+            success: true,
+            message: student
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
 
 
 module.exports={student_identify,student_get,student_id,student_idupdate}
