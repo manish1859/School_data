@@ -11,7 +11,6 @@ const student_identify = async (req, res) => {
             passingYear, admissionBy, feesBy
         } = req.body;
 
-        // ✅ Required fields check
         if (!fullName || !email || !course || !contact) {
             return res.status(400).json({
                 success: false,
@@ -19,7 +18,6 @@ const student_identify = async (req, res) => {
             });
         }
 
-        // ✅ Email duplicate check
         const student_email = await school_data.findOne({ email });
         if (student_email) {
             return res.status(400).json({
@@ -28,7 +26,6 @@ const student_identify = async (req, res) => {
             });
         }
 
-        // ✅ Contact duplicate check
         const student_contact = await school_data.findOne({ contact });
         if (student_contact) {
             return res.status(400).json({
@@ -37,7 +34,6 @@ const student_identify = async (req, res) => {
             });
         }
 
-        // ✅ Course fetch
         const courseDetails = await coursetype.findOne({ name: course });
 
         if (!courseDetails) {
@@ -53,22 +49,7 @@ const student_identify = async (req, res) => {
         const discountAmount = (fees * scholarshipValue) / 100;
         const finalAmount = Math.max(0, fees - discountAmount);
 
-        const student = await school_data.create({
-            fullName,
-            admissionDate,
-            category,
-            city,
-            email,
-            institute,
-            remarks,
-            centerCode,
-            dob,
-            course,
-            fees: fees,
-            duration: courseDetails.duration,
-            scholarship: scholarshipValue,
-            finalAmount: finalAmount,
-
+        const student = await school_data.create({fullName,admissionDate,category,city,email,institute,remarks,centerCode,dob,course,fees: fees,duration: courseDetails.duration,scholarship: scholarshipValue,finalAmount: finalAmount,
             residence,
             contact,
             degree,
