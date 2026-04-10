@@ -1,16 +1,23 @@
-const { Schema } = require("mongoose");
+const { Schema, default: mongoose } = require("mongoose");
 
-settingSchema=new Schema(
+const settingSchema = new Schema(
     {
-        institution:{
-            type:String,
-            require:true
+        institution: {
+            type: String,
+            require: true
         },
-        logo:{
-            type:String,
-            require:true
+        logo: {
+            type: String,
+            require: false
         },
-        
+        themeColor: {
+            type: String,   
+            default: "#4f46e5"
+        }
 
-    },{timestamps:true}
+
+    }, { timestamps: true }
 )
+
+const setting=mongoose.model('Setting',settingSchema);
+module.exports=setting;
