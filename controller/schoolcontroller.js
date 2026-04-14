@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt')
 const jwt=require('jsonwebtoken');
-const canxSchema = require("../model/canxSchema");
+const schooladmin = require("../model/schooladmin");
 
 const regipost=async(req,res)=>{
 
@@ -14,7 +14,7 @@ const regipost=async(req,res)=>{
         })
     }
 
-    const ab=await canxSchema.findOne({email})
+    const ab=await schooladmin.findOne({email})
     if(ab){
         console.log('This email is already there, please provide another email')
       return  res.status(500).json({
@@ -23,7 +23,7 @@ const regipost=async(req,res)=>{
     }
    const sa= await bcrypt.hash(password,10)
    
-         const register=await canxSchema.create({name,password:sa,email})
+         const register=await schooladmin.create({name,password:sa,email})
       return  res.status(200).json({
             success:true,
             message:register
@@ -42,7 +42,7 @@ const admin=async(req,res)=>{
         })
     }
 
-    const ab=await canxSchema.findOne({email})
+    const ab=await schooladmin.findOne({email})
     if(ab){
         console.log('This email is already there, please provide another email')
       return  res.status(500).json({
@@ -51,7 +51,7 @@ const admin=async(req,res)=>{
     }
    const sa= await bcrypt.hash(password,10)
    
-         const register=await canxSchema.create({name,password:sa,email,role:'admin',status:'active'})
+         const register=await schooladmin.create({name,password:sa,email,role:'admin',status:'active'})
       return  res.status(200).json({
             success:true,
             message:register
@@ -68,7 +68,7 @@ const loginpost=async(req,res)=>{
             message:'Enter your field'
         })
     }
-    const ac=await canxSchema.findOne({email})
+    const ac=await schooladmin.findOne({email})
     if(!ac){
      return res.status(404).json({
         success:false,
@@ -115,7 +115,7 @@ const logout=async(req,res)=>{
     const decoded=await jwt.verify(newtoken,"Seceretkey")
     console.log(decoded)
 
-    const check=await canxSchema.findOne({email:decoded.email})
+    const check=await schooladmin.findOne({email:decoded.email})
     console.log(check)
 
 

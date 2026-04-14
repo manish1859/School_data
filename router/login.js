@@ -4,9 +4,9 @@ const adminrole = require('../middleware/status')
 const is_token = require('../middleware/is_token')
 const route=express.Router()
 
-route.post('/canxregister',regipost)
-route.post('/canxlogin',loginpost)
-route.delete('/canxlogout',logout)
-route.post('/canxadmin',admin)
+route.post('/adminregister',regipost)
+route.post('/adminlogin',loginpost)
+route.delete('/adminlogout',logout)
+route.post('/schooladmin',admin)
 
 module.exports=route
