@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
-const canxSchema = require("../model/canxSchema");
-const canxemployee = require("../model/user");
+const schooladmin = require("../model/schooladmin");
 
 const is_token = async (req, res, next) => {
     try {
@@ -30,7 +29,7 @@ const is_token = async (req, res, next) => {
             })
         }
 
-        const user = await canxSchema.findById(tokenVerify._id)
+        const user = await schooladmin.findById(tokenVerify._id)
         console.log("1111111111", user)
         if (!user) {
             return res.status(401).json({
